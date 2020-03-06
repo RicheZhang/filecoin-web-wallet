@@ -18,6 +18,10 @@ export default () => {
         Ledger device and never be shared with your PC.
       </p>
       <p>
+        See our walkthrough video{' '}
+        <a href='https://www.youtube.com/watch?v=cYh8CRPSSvA'>here</a>.
+      </p>
+      <p>
         <strong>To use the web wallet you’ll need:</strong>
       </p>
       <ul>
