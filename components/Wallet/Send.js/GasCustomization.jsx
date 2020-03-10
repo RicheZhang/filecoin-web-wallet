@@ -60,7 +60,7 @@ const GasCustomization = ({
   }
 
   return (
-    <ContentContainer>
+    <ContentContainer maxWidth={13}>
       <Label my={3} color='core.primary'>
         Custom Transaction Fee
       </Label>
@@ -145,11 +145,11 @@ const GasCustomization = ({
         flexDirection='row'
         alignItems='center'
         justifyContent='space-between'
-        mt={3}
+        mt={6}
         mx={1}
       >
-        <Label>New Transaction Fee</Label>
-        <Box display='flex' flexDirection='column' textAlign='right' mt={5}>
+        <Label fontSize={4}>New Transaction Fee</Label>
+        <Box display='flex' flexDirection='column' textAlign='right'>
           <Title fontSize={4} color='core.primary'>
             {estimatedGas
               ? `${estimatedGas.toAttoFil()} AttoFil`
@@ -157,6 +157,9 @@ const GasCustomization = ({
           </Title>
         </Box>
       </Box>
+      <Text width='100%' textAlign='left' mb={0} color='core.darkgray'>
+        1FIL equals 1000000000000000000AttoFil
+      </Text>
       <FloatingContainer>
         <Button
           type='button'
