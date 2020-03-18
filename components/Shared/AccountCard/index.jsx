@@ -67,10 +67,12 @@ const AccountCard = forwardRef(
         <Box display='flex'>
           {walletType !== IMPORT_SINGLE_KEY && (
             <Button
+              type='button'
               variant='tertiary'
               title='Switch'
               onClick={onAccountSwitch}
               p={2}
+              py={2}
             />
           )}
           {walletType === LEDGER && (
@@ -80,6 +82,7 @@ const AccountCard = forwardRef(
               onClick={onShowOnLedger}
               ml={2}
               p={2}
+              py={2}
               disabled={ledgerBusy}
             />
           )}
