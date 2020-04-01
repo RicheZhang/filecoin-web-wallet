@@ -11,11 +11,13 @@ import {
 import { FILSCAN } from '../../../constants'
 import formatFilscanMessages from './formatFilscanMessages'
 import useWallet from '../../../WalletProvider/useWallet'
+import { useWalletProvider } from '../../../WalletProvider'
 
 const PAGINATION_COUNT = 8
 
 export default () => {
   const { address } = useWallet()
+  const { walletProvider } = useWalletProvider()
   const dispatch = useDispatch()
   const {
     loading,
@@ -39,7 +41,25 @@ export default () => {
     }
   })
 
-  const fetchInitialData = useCallback(
+  const fetchPendingMsgs = useCallback(
+    async address => {
+      const res = await walletProvider.jsonRpcEngine.request(
+        'MpoolPending',
+        null
+      )
+
+      const relevantMessages = res.reduce((accum, { Message }) => {
+        if (Message.From === address || Message.To === address)
+          accum.push(Message)
+        return accum
+      }, [])
+
+      console.log(relevantMessages)
+    },
+    [walletProvider]
+  )
+
+  const fetchConfirmedMsgHistory = useCallback(
     async (address, total, cachedCount) => {
       if (total === cachedCount) return
       try {
@@ -79,13 +99,14 @@ export default () => {
 
   const showMore = useCallback(() => {
     dispatch(fetchingNextPage())
-    fetchInitialData(address, total, confirmed.length)
-  }, [address, confirmed.length, total, fetchInitialData, dispatch])
+    fetchConfirmedMsgHistory(address, total, confirmed.length)
+  }, [address, confirmed.length, total, fetchConfirmedMsgHistory, dispatch])
 
   useEffect(() => {
     if (!loading && !loadedFailure && !loadedSuccess) {
       dispatch(fetchingConfirmedMessages())
-      fetchInitialData(address, total, confirmed.length)
+      fetchConfirmedMsgHistory(address, total, confirmed.length)
+      fetchPendingMsgs(address)
     }
   }, [
     address,
@@ -94,7 +115,8 @@ export default () => {
     loading,
     loadedFailure,
     loadedSuccess,
-    fetchInitialData,
+    fetchConfirmedMsgHistory,
+    fetchPendingMsgs,
     dispatch
   ])
 
