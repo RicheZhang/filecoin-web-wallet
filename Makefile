@@ -1,8 +1,8 @@
 build:
-	docker build -t openworklabs/filecoin-web-wallet:0.3.0 .
+	docker build -t openworklabs/filecoin-web-wallet:0.4.0 .
 
 push:
-	docker push openworklabs/filecoin-web-wallet:0.3.0
+	docker push openworklabs/filecoin-web-wallet:0.4.0
 
 create-api:
 	kubectl apply -f api.yaml
@@ -25,6 +25,6 @@ remove:
 	docker rm wallet
 
 run:
-	docker run -d -p 5001:5001 --env-file .env --name wallet openworklabs/filecoin-web-wallet:0.3.0
+	docker run -d -p 5001:5001 --env-file .env --name wallet openworklabs/filecoin-web-wallet:0.4.0
 	  
 release: enable build push stop remove run
