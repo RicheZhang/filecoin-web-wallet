@@ -65,13 +65,21 @@ const AccountPicker = ({ loadingAccounts }) => {
               role='button'
               onClick={async () => {
                 try {
+                  console.log('FETCHING PROVIDER')
                   const provider = await fetchProvider(dispatchLocal, dispatch)
+                  console.log('FETCHED PROVIDER SUCCESS', provider)
+                  console.log(
+                    'about to showAddressAndPubKey with path: ',
+                    selectedWallet.path
+                  )
                   if (provider) {
                     await provider.wallet.showAddressAndPubKey(
                       selectedWallet.path
                     )
+                    console.log('FINISHED SHOWING')
                   }
                 } catch (err) {
+                  console.log('CAUGHT AN ERROR', err)
                   dispatch(error(err))
                 }
               }}
