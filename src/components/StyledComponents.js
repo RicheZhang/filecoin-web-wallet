@@ -27,11 +27,11 @@ export const JustifyContentCenter = styled.div`
 
 export const FlexContainer = styled.div`
   display: flex;
-  flex-direction: ${props => props.flexDirection};
+  flex-direction: ${(props) => props.flexDirection};
 `
 
 export const JustifyContentContainer = styled(FlexContainer)`
-  justify-content: ${props => props.justifyContent};
+  justify-content: ${(props) => props.justifyContent};
 `
 
 /* COMPONENTS */
@@ -167,9 +167,9 @@ export const AvailableBalanceLabel = styled.div`
 `
 
 export const ButtonBase = styled.button`
-  cursor: ${props => (props.disabled ? 'not-allowed' : 'pointer')};
-  disabled: ${props => props.disabled};
-  background: ${props => (props.disabled ? GRAY : FILECOIN_BLUE)};
+  cursor: ${(props) => (props.disabled ? 'not-allowed' : 'pointer')};
+  disabled: ${(props) => props.disabled};
+  background: ${(props) => (props.disabled ? GRAY : FILECOIN_BLUE)};
   color: ${WHITE};
   border: 0;
   border-radius: 4px;
@@ -277,13 +277,13 @@ export const OnboardingContainer = styled.div`
 
 export const UnderlineOnHover = styled(SectionHeader)`
   &:hover {
-    text-decoration: underline;
-    cursor: pointer;
+    text-decoration: ${(props) => (props.disabled ? 'none' : 'underline')};
+    cursor: ${(props) => (props.disabled ? 'not-allowed' : 'pointer')};
   }
 `
 
 export const CheckboxInputLabel = styled.label`
-  color: ${props => (props.disabled ? GRAY : BLACK)};
+  color: ${(props) => (props.disabled ? GRAY : BLACK)};
   font-size: ${TEXT_XSM}px;
 `
 

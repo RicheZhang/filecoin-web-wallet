@@ -44,7 +44,7 @@ const SettingsContainer = styled(JustifyContentContainer)`
 
 const LineItem = styled(JustifyContentContainer)`
   height: ${BASE_SIZE_UNIT * 10}px;
-  background-color: ${props => (props.even ? 'white' : 'aliceblue')};
+  background-color: ${(props) => (props.even ? 'white' : 'aliceblue')};
   padding: 0 ${BASE_SIZE_UNIT * 2}px 0 ${BASE_SIZE_UNIT * 2}px;
   align-items: center;
 `
@@ -79,7 +79,7 @@ const AccountSelector = ({
     selectedWallet,
     walletsInRdx,
     walletType
-  } = useSelector(state => ({
+  } = useSelector((state) => ({
     walletProvider: state.walletProvider,
     selectedWallet: state.wallets[state.selectedWalletIdx],
     walletsInRdx: state.wallets,
@@ -174,7 +174,7 @@ const AccountSelector = ({
   const refreshBalances = async () => {
     setRefreshingBalances(true)
     const walletsOnScreen = walletsInRdx.filter(
-      wallet =>
+      (wallet) =>
         wallet.path[4] >= page * ACCOUNT_BATCH_SIZE &&
         wallet.path[4] < page * ACCOUNT_BATCH_SIZE + ACCOUNT_BATCH_SIZE
     )
@@ -189,7 +189,7 @@ const AccountSelector = ({
     setRefreshingBalances(false)
   }
 
-  const paginate = page => {
+  const paginate = (page) => {
     const params = new URLSearchParams(search)
     params.delete('page')
     params.set('page', page)
@@ -200,6 +200,9 @@ const AccountSelector = ({
     <SettingsContainer flexDirection='column' justifyContent='space-between'>
       {!loadingAccounts && (
         <ButtonBase
+          css={`
+            width: fit-content;
+          `}
           disabled={refreshingBalances}
           onClick={() => refreshBalances()}
         >
@@ -248,7 +251,7 @@ const AccountSelector = ({
             ) : (
               walletsInRdx
                 .filter(
-                  wallet =>
+                  (wallet) =>
                     wallet.path[4] >= page * ACCOUNT_BATCH_SIZE &&
                     wallet.path[4] <
                       page * ACCOUNT_BATCH_SIZE + ACCOUNT_BATCH_SIZE

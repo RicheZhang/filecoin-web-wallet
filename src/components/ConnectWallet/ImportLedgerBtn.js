@@ -9,6 +9,7 @@ import { connectLedger, LEDGER_STATE_PROPTYPES } from '../../utils/ledger'
 const Button = styled(ButtonBase)`
   align-self: center;
   margin-bottom: 30px;
+  width: fit-content;
 `
 
 const ImportLedgerBtn = ({
@@ -28,6 +29,7 @@ const ImportLedgerBtn = ({
         )
       }
       onClick={async () => {
+        if (ledgerState.connecting) return
         const successfulConnection = await connectLedger(
           dispatchLocal,
           dispatchRdx,

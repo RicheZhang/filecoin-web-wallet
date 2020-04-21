@@ -31,6 +31,8 @@ const AccountPicker = ({ loadingAccounts }) => {
   const dispatch = useDispatch()
   const [, dispatchLocal] = useReducer(reducer, initialLedgerState)
 
+  const [clicked, setClicked] = useState(false)
+
   const onClick = useCallback(() => {
     setCopiedToClipboard(true)
     copyToClipboard(selectedWallet.address)
@@ -62,8 +64,11 @@ const AccountPicker = ({ loadingAccounts }) => {
           </AccountBalance>
           {walletType === LEDGER && !loadingAccounts && selectedWallet && (
             <UnderlineOnHover
+              disabled={clicked}
               role='button'
               onClick={async () => {
+                if (clicked) return
+                setClicked(true)
                 try {
                   console.log('FETCHING PROVIDER')
                   const provider = await fetchProvider(dispatchLocal, dispatch)
@@ -82,9 +87,12 @@ const AccountPicker = ({ loadingAccounts }) => {
                   console.log('CAUGHT AN ERROR', err)
                   dispatch(error(err))
                 }
+                setClicked(false)
               }}
             >
-              Show address on Ledger device
+              {clicked
+                ? 'View address on Ledger device'
+                : 'Show address on Ledger device'}
             </UnderlineOnHover>
           )}
         </JustifyContentContainer>
