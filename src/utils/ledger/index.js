@@ -17,10 +17,17 @@ export const establishConnectionWithDevice = async (
 ) => {
   dispatchLocal({ type: USER_INITIATED_IMPORT })
   try {
+    console.log('attempting to create transport')
     const transport = await createTransport()
+    console.log('created transport, transport: ', transport)
     dispatchLocal({ type: LEDGER_CONNECTED })
     return transport
   } catch (err) {
+    console.log(
+      'CAUGHT ERROR WHEN ESTABLISHING CONNECTION WITH DEVICE: ',
+      err,
+      err.message
+    )
     if (
       err.message &&
       !err.message.toLowerCase().includes('device is already open')
@@ -44,11 +51,17 @@ export const establishConnectionWithFilecoinApp = async (
   dispatchRdx
 ) => {
   dispatchLocal({ type: ESTABLISHING_CONNECTION_W_FILECOIN_APP })
+  console.log('establishing connection with filecoin app')
   try {
     const provider = new Filecoin(new LedgerProvider(transport), {
       apiAddress: 'https://proxy.openworklabs.com/rpc/v0'
     })
+    console.log('created a new wallet provider: ', provider)
+
+    console.log('fetching Ledger app version')
     const response = await provider.wallet.getVersion()
+
+    console.log('fetched ledger app version: ', response)
 
     if (response.device_locked) {
       dispatchLocal({ type: LEDGER_LOCKED })
@@ -68,6 +81,11 @@ export const establishConnectionWithFilecoinApp = async (
 
     return provider
   } catch (err) {
+    console.log(
+      'CAUGHT ERROR WHEN TRYING TO ESTABLISH CONNECTION WITH FILECOIN APP: ',
+      err,
+      err.message
+    )
     dispatchLocal({ type: FILECOIN_APP_NOT_OPEN })
 
     if (
@@ -106,10 +124,12 @@ const fetchWallets = async (provider, dispatchRdx, network = 't') => {
 }
 
 export const fetchProvider = async (dispatchLocal, dispatchRdx) => {
+  console.log('ESTABLISHING TRANSPORT')
   const transport = await establishConnectionWithDevice(
     dispatchLocal,
     dispatchRdx
   )
+  console.log('ESTABLISHED TRANSPORT: ', transport)
   if (!transport) return false
   return establishConnectionWithFilecoinApp(
     transport,

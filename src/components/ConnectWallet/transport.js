@@ -5,7 +5,12 @@ export default () =>
   new Promise((resolve, reject) => {
     TransportWebHID.create()
       .then(resolve)
-      .catch(err => {
+      .catch((err) => {
+        console.log(
+          'error created webHID transport, falling back to webUSB: ',
+          err,
+          err.message
+        )
         if (
           err.message.toLowerCase().includes('navigator.hid is not supported')
         ) {

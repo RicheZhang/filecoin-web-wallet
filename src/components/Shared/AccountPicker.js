@@ -73,11 +73,8 @@ const AccountPicker = ({ loadingAccounts }) => {
                   console.log('FETCHING PROVIDER')
                   const provider = await fetchProvider(dispatchLocal, dispatch)
                   console.log('FETCHED PROVIDER SUCCESS', provider)
-                  console.log(
-                    'about to showAddressAndPubKey with path: ',
-                    selectedWallet.path
-                  )
                   if (provider) {
+                    console.log('about to show address and pub key')
                     await provider.wallet.showAddressAndPubKey(
                       selectedWallet.path
                     )
