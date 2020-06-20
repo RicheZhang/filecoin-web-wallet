@@ -12,7 +12,8 @@ import {
   Menu,
   MenuItem,
   ButtonClose,
-  StyledATag
+  StyledATag,
+  LoadingScreen
 } from '../Shared'
 import Create from './Create'
 import AccountCardAlt from '../Shared/AccountCardAlt'
@@ -36,6 +37,7 @@ const Close = styled(ButtonClose)`
 const AccountSelector = ({ investor }) => {
   const wallet = useWallet()
   const [loadingAccounts, setLoadingAccounts] = useState(false)
+  const [loadingPage, setLoadingPage] = useState(true)
   const [uncaughtError, setUncaughtError] = useState(null)
   const dispatch = useDispatch()
   const { errorInRdx, walletsInRdx, network } = useSelector(state => ({
@@ -77,13 +79,15 @@ const AccountSelector = ({ investor }) => {
                 dispatch(walletList([wallet]))
               })
             )
-            setLoadedFirstFiveWallets(true)
+            setLoadingPage(false)
           }
         } catch (err) {
           setUncaughtError(err)
+          setLoadingPage(false)
         }
       } else {
         setLoadedFirstFiveWallets(true)
+        setLoadingPage(false)
       }
     }
 
@@ -152,58 +156,62 @@ const AccountSelector = ({ investor }) => {
     <>
       {!investor && <Close onClick={onClose} />}
       <Wrapper display='flex' flexDirection='column' justifyItems='center'>
-        <Box
-          display='flex'
-          flexDirection='column'
-          alignSelf='center'
-          maxWidth={19}
-          p={4}
-        >
-          <Menu m={2}>
-            <MenuItem display='flex' alignItems='center' color='core.primary'>
-              <Glyph
-                acronym='Sw'
-                bg='core.primary'
-                borderColor='core.primary'
-                color='core.white'
-              />
-              <Title ml={2}>Switch Accounts</Title>
-            </MenuItem>
-            <MenuItem>
-              <Text>
-                Your single{' '}
-                {wallet.type === LEDGER ? 'Ledger Device ' : 'seed phrase'}{' '}
-                creates hundreds of individual &quot;accounts&quot;.
-                <br />
-                <StyledATag rel='noopener' target='_blank' href='/faqs'>
-                  Don&rsquo;t see an account you were previously using?
-                </StyledATag>
-              </Text>
-            </MenuItem>
-          </Menu>
-          <Menu>
-            <MenuItem display='flex' flexWrap='wrap'>
-              {walletsInRdx.map((w, i) => (
-                <AccountCardAlt
-                  alignItems='center'
-                  onClick={() => dispatch(switchWallet(i), onClose())}
-                  key={w.address}
-                  address={w.address}
-                  index={i}
-                  selected={w.address === wallet.address}
-                  balance={makeFriendlyBalance(w.balance, 6)}
+        {loadingPage ? (
+          <LoadingScreen height='100vh' />
+        ) : (
+          <Box
+            display='flex'
+            flexDirection='column'
+            alignSelf='center'
+            maxWidth={19}
+            p={4}
+          >
+            <Menu m={2}>
+              <MenuItem display='flex' alignItems='center' color='core.primary'>
+                <Glyph
+                  acronym='Sw'
+                  bg='core.primary'
+                  borderColor='core.primary'
+                  color='core.white'
                 />
-              ))}
-              <Create
-                errorMsg={errorMsg}
-                nextAccountIndex={walletsInRdx.length}
-                onClick={fetchNextAccount}
-                loading={loadingAccounts}
-                mb={2}
-              />
-            </MenuItem>
-          </Menu>
-        </Box>
+                <Title ml={2}>Switch Accounts</Title>
+              </MenuItem>
+              <MenuItem>
+                <Text>
+                  Your single{' '}
+                  {wallet.type === LEDGER ? 'Ledger Device ' : 'seed phrase'}{' '}
+                  creates hundreds of individual &quot;accounts&quot;.
+                  <br />
+                  <StyledATag rel='noopener' target='_blank' href='/faqs'>
+                    Don&rsquo;t see an account you were previously using?
+                  </StyledATag>
+                </Text>
+              </MenuItem>
+            </Menu>
+            <Menu>
+              <MenuItem display='flex' flexWrap='wrap'>
+                {walletsInRdx.map((w, i) => (
+                  <AccountCardAlt
+                    alignItems='center'
+                    onClick={() => dispatch(switchWallet(i), onClose())}
+                    key={w.address}
+                    address={w.address}
+                    index={i}
+                    selected={w.address === wallet.address}
+                    balance={makeFriendlyBalance(w.balance, 6)}
+                  />
+                ))}
+                <Create
+                  errorMsg={errorMsg}
+                  nextAccountIndex={walletsInRdx.length}
+                  onClick={fetchNextAccount}
+                  loading={loadingAccounts}
+                  mb={2}
+                />
+              </MenuItem>
+            </Menu>
+          </Box>
+        )}
       </Wrapper>
     </>
   )
