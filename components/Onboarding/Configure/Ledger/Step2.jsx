@@ -93,7 +93,7 @@ Step2Helper.defaultProps = {
   otherError: null
 }
 
-export default () => {
+const Step2 = ({ investor }) => {
   const { ledger, fetchDefaultWallet, walletProvider } = useWalletProvider()
   const dispatch = useDispatch()
   const resetState = useReset()
@@ -104,6 +104,28 @@ export default () => {
     ...ledger,
     otherError: generalError
   })
+
+  const routeToNextPage = () => {
+    const params = new URLSearchParams(router.query)
+    const query = investor
+      ? `/investor/accounts?${params.toString()}`
+      : `/home?${params.toString()}`
+    router.push(query)
+  }
+
+  const onClick = async () => {
+    setLoading(true)
+    try {
+      const wallet = await fetchDefaultWallet(walletProvider)
+      if (wallet) {
+        dispatch(walletList([wallet]))
+        routeToNextPage()
+      }
+    } catch (err) {
+      setLoading(false)
+      dispatch(rdxError(err))
+    }
+  }
 
   return (
     <>
@@ -148,22 +170,7 @@ export default () => {
         />
         <Button
           title='My Ledger device is unlocked & Filecoin app open'
-          onClick={async () => {
-            setLoading(true)
-            try {
-              const wallet = await fetchDefaultWallet(walletProvider)
-              if (wallet) {
-                dispatch(walletList([wallet]))
-                const params = new URLSearchParams(router.query)
-                const hasParams = Array.from(params).length > 0
-                const query = hasParams ? `/home?${params.toString()}` : `/home`
-                router.push(query)
-              }
-            } catch (err) {
-              setLoading(false)
-              dispatch(rdxError(err))
-            }
-          }}
+          onClick={onClick}
           disabled={!ledger.userImportFailure && loading}
           variant='primary'
           ml={2}
@@ -172,3 +179,9 @@ export default () => {
     </>
   )
 }
+
+Step2.propTypes = {
+  investor: PropTypes.bool.isRequired
+}
+
+export default Step2

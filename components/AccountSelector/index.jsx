@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { bool } from 'prop-types'
 import { useSelector, useDispatch } from 'react-redux'
 import styled from 'styled-components'
 import { useRouter } from 'next/router'
@@ -32,7 +33,7 @@ const Close = styled(ButtonClose)`
   right: ${props => props.theme.sizes[3]}px;
 `
 
-const AccountSelector = () => {
+const AccountSelector = ({ investor }) => {
   const wallet = useWallet()
   const [loadingAccounts, setLoadingAccounts] = useState(false)
   const [uncaughtError, setUncaughtError] = useState(null)
@@ -46,9 +47,11 @@ const AccountSelector = () => {
   const router = useRouter()
 
   const onClose = () => {
-    const newSearchParams = new URLSearchParams(router.query)
-    newSearchParams.delete('page')
-    router.push(`/home?${newSearchParams.toString()}`)
+    const searchParams = new URLSearchParams(router.query)
+    const route = investor
+      ? `/investor/home?${searchParams.toString()}`
+      : `/home?${searchParams.toString()}`
+    router.push(route)
   }
 
   let errorMsg = ''
@@ -92,7 +95,7 @@ const AccountSelector = () => {
 
   return (
     <>
-      <Close onClick={onClose} />
+      {!investor && <Close onClick={onClose} />}
       <Wrapper display='flex' flexDirection='column' justifyItems='center'>
         <Box
           display='flex'
@@ -149,6 +152,14 @@ const AccountSelector = () => {
       </Wrapper>
     </>
   )
+}
+
+AccountSelector.propTypes = {
+  investor: bool
+}
+
+AccountSelector.defaultProps = {
+  investor: false
 }
 
 export default AccountSelector

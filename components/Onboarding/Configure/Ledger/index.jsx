@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
+import { bool } from 'prop-types'
 import { Box } from '../../../Shared'
 
 import Step1 from './Step1'
 import Step2 from './Step2'
 
-export default () => {
+const Ledger = ({ investor }) => {
   const [step, setStep] = useState(1)
   return (
     <Box
@@ -16,7 +17,17 @@ export default () => {
       maxWidth={13}
     >
       {step === 1 && <Step1 setStep={setStep} />}
-      {step === 2 && <Step2 />}
+      {step === 2 && <Step2 investor={investor} />}
     </Box>
   )
 }
+
+Ledger.propTypes = {
+  investor: bool
+}
+
+Ledger.defaultProps = {
+  investor: false
+}
+
+export default Ledger
