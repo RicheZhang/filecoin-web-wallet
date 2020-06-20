@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { bool } from 'prop-types'
 import { useSelector, useDispatch } from 'react-redux'
 import styled from 'styled-components'
@@ -45,6 +45,61 @@ const AccountSelector = ({ investor }) => {
   }))
   const { ledger, connectLedger, walletProvider } = useWalletProvider()
   const router = useRouter()
+
+  const [loadedFirstFiveWallets, setLoadedFirstFiveWallets] = useState(false)
+
+  useEffect(() => {
+    const loadFirstFiveWallets = async () => {
+      if (walletsInRdx.length < 5) {
+        try {
+          let provider = walletProvider
+          if (wallet.type === LEDGER) {
+            provider = await connectLedger()
+          }
+
+          if (provider) {
+            const addresses = await provider.wallet.getAccounts(
+              walletsInRdx.length,
+              5,
+              network
+            )
+
+            await Promise.all(
+              addresses.map(async address => {
+                const balance = await provider.getBalance(address)
+                const networkCode = network === 'f' ? 461 : 1
+                const wallet = {
+                  balance,
+                  address,
+                  path: createPath(networkCode, walletsInRdx.length)
+                }
+
+                dispatch(walletList([wallet]))
+              })
+            )
+            setLoadedFirstFiveWallets(true)
+          }
+        } catch (err) {
+          setUncaughtError(err)
+        }
+      } else {
+        setLoadedFirstFiveWallets(true)
+      }
+    }
+
+    if (!loadedFirstFiveWallets) {
+      setLoadedFirstFiveWallets(true)
+      loadFirstFiveWallets()
+    }
+  }, [
+    connectLedger,
+    dispatch,
+    network,
+    wallet.type,
+    walletProvider,
+    walletsInRdx.length,
+    loadedFirstFiveWallets
+  ])
 
   const onClose = () => {
     const searchParams = new URLSearchParams(router.query)
