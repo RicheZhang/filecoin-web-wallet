@@ -13,7 +13,6 @@ export default styled(Box).attrs(() => ({
   flex-direction: row;
   bottom: ${props => props.theme.sizes[3]}px;
   justify-content: space-between;
-  align-self: center;
   border-radius: ${props => props.theme.radii[2]};
   max-width: ${props => props.theme.sizes[13]}px;
   width: 40%;
